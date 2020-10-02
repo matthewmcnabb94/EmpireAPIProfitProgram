@@ -96,7 +96,7 @@ public class PricEmpireAPI {
 
                 System.out.println("Size of array: " + jsonarr1.length());
 
-                String columnNamesList = "Name,Steam price,profit" + "\n";
+                String columnNamesList = "Name,Empire Price $,Steam price $,profit $,profit margin" + "\n";
 
                 pw.write(columnNamesList);
 
@@ -123,7 +123,7 @@ public class PricEmpireAPI {
 
                         
 
-                            if (CSGOEmpire.getInt("sourcePrice") > 0) {
+                            if (CSGOEmpire.getInt("sourcePrice") > 0 && !skinName.contains("Sticker") && !skinName.contains("Operation")) {
 
                                 steamBuyOrderPrice = steam.getInt("sourcePrice");
 
@@ -150,11 +150,13 @@ public class PricEmpireAPI {
                                 //System.out.println("Skin Name: "+skinName + " / profit: "+profit+"%");
 
                                 //System.out.println("Skin name: "+skinName + "    price: "+fPrice);
-                                if (fPrice > 30 && profit > 50) {
+                                if (fPrice > 30 && fPrice < 500 && profit > 70) {
                                     StringBuilder builder = new StringBuilder();
 
                                     builder.append(skinName + ",");
                                     builder.append(fPrice + ",");
+                                    builder.append(steamPrice + ",");
+                                    builder.append(fPrice - steamPrice + ",");
                                     builder.append(profit + ",");
                                     builder.append('\n');
                                     pw.write(builder.toString());
