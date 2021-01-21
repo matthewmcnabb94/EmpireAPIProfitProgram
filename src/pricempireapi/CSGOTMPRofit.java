@@ -30,7 +30,7 @@ import org.json.JSONObject;
  *
  * @author matth
  */
-public class PricEmpireAPI {
+public class CSGOTMPRofit {
     
     private static HttpURLConnection connection;
     private static  BufferedReader reader, readerV;
@@ -49,7 +49,7 @@ public class PricEmpireAPI {
     private static BufferedReader reader1, reader2, reader3;
     private static String line1, line2, line3;
     
-    private static double buyOrderPriceFromSteam, price, fPrice, fSteamPrice, steamBuyOrderPrice, fPricePlus5;
+    private static double buyOrderPriceFromSteam, price, fPrice, fSteamPrice, steamBuyOrderPrice;
     
     private final static String apiKey = "2c17a87b-372f-483a-85ad-6269d4b5eaa5";
     
@@ -62,7 +62,6 @@ public class PricEmpireAPI {
     public static void main(String[] args) {
         getEmpireItems();
         //getCSGOTMItems();
-        
     }
 
     public static void getEmpireItems() {
@@ -85,7 +84,7 @@ public class PricEmpireAPI {
 
                 PrintWriter pw = null;
                 try {
-                    pw = new PrintWriter(new FileWriter("F:\\PricEmpireAPI\\records_price_empire.csv"), true);
+                    pw = new PrintWriter(new FileWriter("F:\\PricEmpireAPI\\csogTMLAtestPRofit.csv"), true);
                 } catch (FileNotFoundException e) {
                     System.out.println("File not found" + e.getMessage());;
                 }
@@ -96,7 +95,7 @@ public class PricEmpireAPI {
                 }
                 reader.close();
 
-                //System.out.println(responseContent.toString());
+                //System.out.println("Success");
                 JSONObject jobj = new JSONObject(responseContent.toString());
                 JSONArray jsonarr1 = (JSONArray) jobj.get("items");
                 //System.out.println(jsonarr1);
@@ -120,14 +119,14 @@ public class PricEmpireAPI {
 
                     //System.out.println("Prices are: "+prices);
                     if (prices.toString().equals("{}")) {
-                        //System.out.println("Prices empty");
+                        System.out.println("Prices empty");
                     }
 
-                    if (prices.has("csgoempire") && prices.has("steam_buyorder")) {
+                    if (prices.has("csgotm") && prices.has("steam_buyorder")) {
 
                         // It exists, do your stuff
                         //System.out.println(":) exists");
-                        JSONObject CSGOEmpire = prices.getJSONObject("csgoempire");
+                        JSONObject CSGOEmpire = prices.getJSONObject("csgotm");
 
                         JSONObject steam = prices.getJSONObject("steam_buyorder");
 
@@ -143,15 +142,13 @@ public class PricEmpireAPI {
 
                                 fPrice = price * 0.61 / 100;
                                 
-                                //fPricePlus5 = fPrice * 1.10;
-                                
                                 fSteamPrice = steamBuyOrderPrice / 100;
                                 
                                 
                                 Rates rate = new Rates();
                                 
                                 
-                                double steamPrice = steamBuyOrderPrice / 100 * rate.getPaxful30();
+                                double steamPrice = steamBuyOrderPrice / 100 * rate.getPaxful60();
                                 
                                 //System.out.println("SkingName: " + skinName + "Price is: " + fPrice + " -----------  Steam prie: " + fSteamPrice + " Discounted: "+steamPrice);
                                 
@@ -164,8 +161,9 @@ public class PricEmpireAPI {
                                 //System.out.println("Skin Name: "+skinName + " / profit: "+profit+"%");
 
                                 //System.out.println("Skin name: "+skinName + "    price: "+fPrice);
-                                if (fPrice > 15 && fPrice < 300 && profit > 1) {
-                                    String volume = "";                                    
+                                if (fPrice > 20 && fPrice < 300 && profit > 60) {
+                                    String volume = "";
+                                    
                                     String dailySales = getDailySales(skinName);
                                     System.out.println(dailySales);
                                     if(dailySales == null)
@@ -208,7 +206,6 @@ public class PricEmpireAPI {
                 //loadPriceEmpirePOJO();
             }
             
-            
             //getCSGOTMItems();
 
         } catch (Exception e) {
@@ -222,17 +219,17 @@ public class PricEmpireAPI {
     
     public static void getCSGOTMItems() {
         try {
-
-            URL url = new URL("https://pricempire.com/api/v1/getAllItems?token=" + apiKey);
-            System.out.println("API URL: " + url);
-            HttpURLConnection connV = (HttpURLConnection) url.openConnection();
-            connV.setRequestMethod("GET");
-            connV.setRequestProperty("Content-Type", "application/json");
-            connV.setRequestProperty("Accept-Charset", "UTF-8");
-            connV.setRequestProperty("User-Agent",
+            
+            URL url = new URL("https://market.csgo.com/api/v2/prices/class_instance/EUR.json");
+            System.out.println("API URL: "+url);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Accept-Charset", "UTF-8");
+            conn.setRequestProperty("User-Agent",
                     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36");
-            connV.connect();
-            int responsecode = connV.getResponseCode();
+            conn.connect();
+            int responsecode = conn.getResponseCode();
 
             if (responsecode != 200) {
                 throw new RuntimeException("HttpResponseCode: " + responsecode);
@@ -245,78 +242,29 @@ public class PricEmpireAPI {
                     System.out.println("File not found" + e.getMessage());;
                 }
 
-                readerV = new BufferedReader(new InputStreamReader(connV.getInputStream()));
+                readerV = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 while ((lineV = readerV.readLine()) != null) {
                     responseContentV.append(lineV);
                 }
                 readerV.close();
                 
-                //System.out.println(responseContent.toString());
-                JSONObject jobj = new JSONObject(responseContentV.toString());
+                
+                
+                JSONObject jobj = new JSONObject(responseContent.toString());
                 JSONArray jsonarr1 = (JSONArray) jobj.get("items");
-                //System.out.println(jsonarr1.length());
-                
-                for (int i = 0; i < jsonarr1.length(); i++) {
-                    
-                    JSONObject items = (JSONObject) jsonarr1.get(i);
-
-                    String skinName = items.getString("name");
-                    
-                    JSONObject prices = items.getJSONObject("prices");
-
-                    
-                    
-                    
-                    
-                    
-                    if (prices.has("csgotm") && prices.has("steam_buyorder")) {
-                        //System.out.println("Match!!!");
-                        JSONObject csgotm = prices.getJSONObject("csgotm");
-                        JSONObject steam = prices.getJSONObject("steam_buyorder");
-                        //System.out.println(csgotm);
-                        
-                        double priceCSGOTM = csgotm.getInt("price");
-                        
-                        double priceFormatted = priceCSGOTM / 100;
-                        
-                        double steamBuyOPrice = steam.getInt("sourcePrice");
-                        
-                        Rates rate = new Rates();
-
-                        double steamPrice = steamBuyOPrice / 100 * rate.getPaxful60();
-                        
-                        double profit = (priceFormatted - steamPrice) / steamPrice * 100 ;
-                        
-                        
-                        System.out.println("Skin: "+skinName + "," + "Price: "+priceFormatted + "," + "Steam Price: "+steamPrice+ "," + "Profit: "+profit);
-                        
-                        
-                        
-                        
-                        
-                        
-                    }
-                    
-                    
-                    
-                    
-                    
-                    
-                }
                 
                 
                 
                 
-                
+               
                 
                 
             }
-                
-            //System.out.println("Sleeping for 5 seconds.......");
-            //Thread.sleep(50000);
-
-        } catch (Exception e) {
-            System.out.println("Exception: " + e.getMessage());
+           
+            
+        }catch(Exception e)
+        {
+            System.out.println("Exception: "+e.getMessage());
         }
 
     }
