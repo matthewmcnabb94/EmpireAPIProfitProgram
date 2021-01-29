@@ -17,6 +17,12 @@ public class Rates {
     private double paxful60 = 0.644;
     private double paxful40 = 0.735;
     private double paxful30 = 0.792;
+    private double paxful25 = 0.826;
+    
+    public double getPaxful25()
+    {
+        return paxful25;
+    }
     
     public double getPaxful30()
     {

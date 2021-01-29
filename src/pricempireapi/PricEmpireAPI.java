@@ -68,7 +68,7 @@ public class PricEmpireAPI {
     public static void getEmpireItems() {
         try {
             //URL url = new URL("https://pricempire.com/api/v1/getAllItems?token=L1YtKhmJyMIpTfdMRIlpZ15j4cMQIqU9ekIzzrIyxWzQhoFcXrKyk6MLjXBu055cgd0RWZYPxbT81z1RLuIIlMbA0QCOq0eUZJrLxC4UnLDDb2VXXL5A9pHoUnr4fKuo");
-            URL url = new URL("https://pricempire.com/api/v1/getAllItems?token="+apiKey);
+            URL url = new URL("https://api.pricempire.com/v1/getAllItems?token="+apiKey);
             System.out.println("API URL: "+url);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
@@ -85,7 +85,7 @@ public class PricEmpireAPI {
 
                 PrintWriter pw = null;
                 try {
-                    pw = new PrintWriter(new FileWriter("F:\\PricEmpireAPI\\records_price_empire.csv"), true);
+                    pw = new PrintWriter(new FileWriter("C:\\SteamDevelopment\\skinProfitGenerator\\EmpireAPIProfitProgram\\records_price_empire.csv"), true);
                 } catch (FileNotFoundException e) {
                     System.out.println("File not found" + e.getMessage());;
                 }
@@ -151,7 +151,7 @@ public class PricEmpireAPI {
                                 Rates rate = new Rates();
                                 
                                 
-                                double steamPrice = steamBuyOrderPrice / 100 * rate.getPaxful30();
+                                double steamPrice = steamBuyOrderPrice / 100 * rate.getPaxful25();
                                 
                                 //System.out.println("SkingName: " + skinName + "Price is: " + fPrice + " -----------  Steam prie: " + fSteamPrice + " Discounted: "+steamPrice);
                                 
@@ -164,7 +164,7 @@ public class PricEmpireAPI {
                                 //System.out.println("Skin Name: "+skinName + " / profit: "+profit+"%");
 
                                 //System.out.println("Skin name: "+skinName + "    price: "+fPrice);
-                                if (fPrice > 15 && fPrice < 300 && profit > 1) {
+                                if (fPrice > 15 && fPrice < 300 && profit > -1) {
                                     String volume = "";                                    
                                     String dailySales = getDailySales(skinName);
                                     System.out.println(dailySales);
